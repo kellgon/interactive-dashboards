@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C3 Network Investment Optimizer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.1/dist/chart.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f0f2f5;
+        }
+        .kpi-card {
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .kpi-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+        #regional-map .map-region {
+            transition: fill 0.3s ease;
+            cursor: pointer;
+        }
+        #regional-map .map-region:hover {
+            opacity: 0.7;
+        }
+        .tooltip {
+            position: absolute;
+            text-align: center;
+            padding: 8px 12px;
+            font: 12px sans-serif;
+            background: #2d3748;
+            color: white;
+            border: 0px;
+            border-radius: 8px;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="min-h-screen p-4 sm:p-6 lg:p-8">
+        <header class="mb-8">
+            <h1 class="text-3xl font-bold text-gray-900">C3 Network Investment Optimizer</h1>
+            <p class="text-gray-600 mt-1">Executive Dashboard for Strategic Network Planning</p>
+        </header>
+
+        <main class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+
+            <!-- KPI Scorecards -->
+            <div class="col-span-1 lg:col-span-3 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <div class="kpi-card bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-sm font-medium text-gray-500">Current Churn Rate</h2>
+                    <p class="mt-2 text-4xl font-bold text-indigo-600">1.25%</p>
+                    <p class="mt-1 text-sm text-green-600 flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" transform="rotate(180 12 12) translate(0 4)"/></svg>
+                        <span>-0.05% vs last quarter</span>
+                    </p>
+                </div>
+                <div class="kpi-card bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-sm font-medium text-gray-500">Projected Churn (No Investment)</h2>
+                    <p class="mt-2 text-4xl font-bold text-red-600">1.80%</p>
+                    <p class="mt-1 text-sm text-red-500 flex items-center">
+                       <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 17l5-5m0 0l-5-5m5 5H6" /></svg>
+                        <span>+0.55% risk in 12 mo.</span>
+                    </p>
+                </div>
+                <div class="kpi-card bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-sm font-medium text-gray-500">Total CapEx Budget</h2>
+                    <p class="mt-2 text-4xl font-bold text-gray-800">$250M</p>
+                    <p class="mt-1 text-sm text-gray-500">2025 Fiscal Year</p>
+                </div>
+                <div class="kpi-card bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h2 class="text-sm font-medium text-gray-500">Projected ROI (Approved Plan)</h2>
+                    <p class="mt-2 text-4xl font-bold text-green-600">18.5%</p>
+                     <p class="mt-1 text-sm text-green-700">Over 5 years</p>
+                </div>
+            </div>
+
+            <!-- Main Content Area -->
+            <div class="col-span-1 lg:col-span-2 space-y-6">
+                <!-- Churn Trend Line Chart -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Churn Trend & Forecast</h3>
+                    <div class="h-80">
+                        <canvas id="churnTrendChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Investment Portfolio Summary -->
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4">Approved Investment Portfolio: FY2025</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm text-left text-gray-500">
+                            <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+                                <tr>
+                                    <th scope="col" class="px-6 py-3">Initiative</th>
+                                    <th scope="col" class="px-6 py-3 text-right">Total Cost</th>
+                                    <th scope="col" class="px-6 py-3 text-right">Expected Churn Impact</th>
+                                    <th scope="col" class="px-6 py-3 text-center">Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Metro Core Fiber Upgrade</td>
+                                    <td class="px-6 py-4 text-right">$120M</td>
+                                    <td class="px-6 py-4 text-right text-green-600 font-medium">-0.25%</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="#" class="font-medium text-indigo-600 hover:underline">View</a>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white border-b hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Rural Broadband Expansion</td>
+                                    <td class="px-6 py-4 text-right">$85M</td>
+                                    <td class="px-6 py-4 text-right text-green-600 font-medium">-0.15%</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="#" class="font-medium text-indigo-600 hover:underline">View</a>
+                                    </td>
+                                </tr>
+                                <tr class="bg-white hover:bg-gray-50">
+                                    <td class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap">Suburban Network Densification</td>
+                                    <td class="px-6 py-4 text-right">$45M</td>
+                                    <td class="px-6 py-4 text-right text-green-600 font-medium">-0.10%</td>
+                                    <td class="px-6 py-4 text-center">
+                                        <a href="#" class="font-medium text-indigo-600 hover:underline">View</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Regional Performance Map -->
+            <div class="col-span-1 bg-white p-6 rounded-xl shadow-sm border border-gray-200 flex flex-col">
+                <h3 class="text-lg font-semibold text-gray-900 mb-2">Regional Performance</h3>
+                <p class="text-sm text-gray-500 mb-4">Color-coded by Network Health Score.</p>
+                <div id="map-container" class="flex-grow w-full relative">
+                    <!-- Fictional Map SVG -->
+                    <svg id="regional-map" viewBox="0 0 300 300" class="w-full h-full">
+                        <path class="map-region" data-region="North" data-score="92" fill="#4ade80" d="M50,10 L250,10 L220,100 L80,100 Z"></path>
+                        <path class="map-region" data-region="West" data-score="75" fill="#facc15" d="M10,110 L80,110 L50,200 L10,180 Z"></path>
+                        <path class="map-region" data-region="Central" data-score="68" fill="#fb923c" d="M85,105 L215,105 L185,200 L115,200 Z"></path>
+                        <path class="map-region" data-region="East" data-score="95" fill="#4ade80" d="M220,110 L290,110 L290,180 L250,200 Z"></path>
+                        <path class="map-region" data-region="South" data-score="55" fill="#f87171" d="M55,205 L245,205 L200,290 L100,290 Z"></path>
+                    </svg>
+                    <div id="tooltip" class="tooltip"></div>
+                </div>
+                 <div class="mt-4">
+                    <div class="flex items-center text-sm mb-2">
+                        <span class="w-4 h-4 rounded-full bg-green-400 mr-2"></span>
+                        <span>Excellent (90-100)</span>
+                    </div>
+                    <div class="flex items-center text-sm mb-2">
+                        <span class="w-4 h-4 rounded-full bg-yellow-400 mr-2"></span>
+                        <span>Good (70-89)</span>
+                    </div>
+                     <div class="flex items-center text-sm mb-2">
+                        <span class="w-4 h-4 rounded-full bg-orange-400 mr-2"></span>
+                        <span>Fair (60-69)</span>
+                    </div>
+                    <div class="flex items-center text-sm">
+                        <span class="w-4 h-4 rounded-full bg-red-400 mr-2"></span>
+                        <span>Needs Attention (&lt;60)</span>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Churn Trend Chart
+    const ctx = document.getElementById('churnTrendChart').getContext('2d');
+    const churnTrendChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: ['Q1 24', 'Q2 24', 'Q3 24', 'Q4 24', 'Q1 25', 'Q2 25', 'Q3 25 (Current)', 'Q4 25', 'Q1 26', 'Q2 26'],
+            datasets: [{
+                label: 'Historical Churn',
+                data: [1.45, 1.40, 1.38, 1.30, 1.28, 1.26, 1.25, null, null, null],
+                borderColor: '#4f46e5',
+                backgroundColor: 'rgba(79, 70, 229, 0.1)',
+                fill: true,
+                tension: 0.4,
+                borderWidth: 2,
+            }, {
+                label: 'Projected Churn (With Investment)',
+                data: [null, null, null, null, null, null, 1.25, 1.15, 1.10, 1.05],
+                borderColor: '#16a34a',
+                borderDash: [5, 5],
+                tension: 0.4,
+                borderWidth: 2,
+            },
+             {
+                label: 'Projected Churn (No Investment)',
+                data: [null, null, null, null, null, null, 1.25, 1.45, 1.65, 1.80],
+                borderColor: '#dc2626',
+                borderDash: [5, 5],
+                tension: 0.4,
+                borderWidth: 2,
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: false,
+                    ticks: {
+                        callback: function(value) {
+                            return value.toFixed(2) + '%';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    position: 'top',
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return `${context.dataset.label}: ${context.parsed.y.toFixed(2)}%`;
+                        }
+                    }
+                },
+                annotation: {
+                    annotations: {
+                        investmentCycle1: {
+                            type: 'line',
+                            yMin: 1.3,
+                            yMax: 1.3,
+                            borderColor: 'rgb(255, 99, 132)',
+                            borderWidth: 2,
+                        }
+                    }
+                }
+            },
+             interaction: {
+                intersect: false,
+                mode: 'index',
+            },
+        }
+    });
+
+    // Map Interactivity
+    const mapRegions = document.querySelectorAll('.map-region');
+    const tooltip = document.getElementById('tooltip');
+    const mapContainer = document.getElementById('map-container');
+
+    mapRegions.forEach(region => {
+        region.addEventListener('mousemove', function(e) {
+            const regionName = this.dataset.region;
+            const score = this.dataset.score;
+
+            tooltip.style.opacity = '1';
+            tooltip.style.left = (e.offsetX + 20) + 'px';
+            tooltip.style.top = (e.offsetY) + 'px';
+            tooltip.innerHTML = `<strong>${regionName}</strong><br>Score: ${score}`;
+        });
+
+        region.addEventListener('mouseleave', function() {
+            tooltip.style.opacity = '0';
+        });
+    });
+});
+</script>
+</body>
+</html>
